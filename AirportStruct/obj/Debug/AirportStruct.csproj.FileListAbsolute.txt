@@ -1,0 +1,6 @@
+D:\BrainAcademy\Proyectos\AirportStruct\AirportStruct\bin\Debug\AirportStruct.exe.config
+D:\BrainAcademy\Proyectos\AirportStruct\AirportStruct\bin\Debug\AirportStruct.exe
+D:\BrainAcademy\Proyectos\AirportStruct\AirportStruct\bin\Debug\AirportStruct.pdb
+D:\BrainAcademy\Proyectos\AirportStruct\AirportStruct\obj\Debug\AirportStruct.csprojResolveAssemblyReference.cache
+D:\BrainAcademy\Proyectos\AirportStruct\AirportStruct\obj\Debug\AirportStruct.exe
+D:\BrainAcademy\Proyectos\AirportStruct\AirportStruct\obj\Debug\AirportStruct.pdb

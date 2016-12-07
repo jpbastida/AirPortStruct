@@ -1,0 +1,1095 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AirportStruct
+{
+
+    struct AirportBoard
+    {
+        public DateTime? DateTime;
+        public string FlightNumber;
+        public string CityPort;
+        public string Airline;
+        public string Terminal;
+        public string FlightStatus;
+        public string Gate;
+    }
+
+
+
+
+    class Program
+    {
+        static string[][] departuresInfo = new string[][]
+        {
+                new string[] { "8:30", "PS713", "Istanbul", "UAL", "D", "departed at 8:35 AM", "G3" },
+                new string[] { "10:10", "TK456", "Paris", "Tukish Airways", "F", "canceled", "A7" },
+                new string[] { "10:10", "TP8234", "Prague", "TAP Portugal", "B", "Gate closed", "D11" },
+                new string[] { "11:25", "AF3368", "Paris", "Air France", "D", "Boarding", "G7" },
+                new string[] { "13:35", "LH2545", "Mexico", "Lufthansa", "B", "Check-in", "G13" }
+        };
+
+        static string[][] arrivalsInfo = new string[][]
+        {
+                new string[] { "9:30", "G9260", "Munich", "Air Arabia", "D", "Arrived", "G5" },
+                new string[] { "10:15", "DL8518", "Paris", "Delta Airlines", "A", "Unknown", "A11" },
+                new string[] { "11:30", "LH2544", "Munich", "Lufthansa", "C", "Delayed", "B3" },
+                new string[] { "11:30", "KL3096", "Amsterdam", "KLM", "A", "on flight", "D15" },
+                new string[] { "14:00", "IB7982", "Barcelona", "Iberia", "D", "expected at", "G10" }
+        };
+
+        static AirportBoard[] Arrivals = new AirportBoard[departuresInfo.Length];
+        static AirportBoard[] Departures = new AirportBoard[arrivalsInfo.Length];
+
+        // *****************************************
+        static void Main(string[] args)
+        {
+            Console.WindowHeight = 42;
+            Console.WindowWidth = 170;
+            Console.CursorVisible = false;
+
+            PopulateData();
+            BuildScreen();
+
+            Console.CursorVisible = true;
+
+            int optionMenu = 0;
+            bool thereIsValue = false;
+
+            while (true)
+            {
+                Console.CursorTop = 40;
+                Console.CursorLeft = 145;
+                bool parseSuccessful = int.TryParse(Console.ReadLine(), out optionMenu);
+                if (parseSuccessful)
+                {
+                    if (optionMenu > 0 && optionMenu < 9)
+                    {
+                        mainMenu(optionMenu);
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        BuildScreen();
+                    }
+                    thereIsValue = true;
+                }
+                else
+                {
+                    thereIsValue = false;
+                    BuildScreen();
+                }
+            }
+        }
+
+        static void PopulateData()
+        {
+            for (int i = 0; i < departuresInfo.Length; i++)
+            {
+                Departures[i].DateTime = DateTime.Parse(departuresInfo[i][0].ToString(), System.Globalization.CultureInfo.InvariantCulture);
+                Departures[i].FlightNumber = departuresInfo[i][1];
+                Departures[i].CityPort = departuresInfo[i][2];
+                Departures[i].Airline = departuresInfo[i][3];
+                Departures[i].Terminal = departuresInfo[i][4];
+                Departures[i].FlightStatus = departuresInfo[i][5];
+                Departures[i].Gate = departuresInfo[i][6];
+            }
+            for (int i = 0; i < arrivalsInfo.Length; i++)
+            {
+                Arrivals[i].DateTime = DateTime.Parse(arrivalsInfo[i][0].ToString(), System.Globalization.CultureInfo.InvariantCulture);
+                Arrivals[i].FlightNumber = arrivalsInfo[i][1];
+                Arrivals[i].CityPort = arrivalsInfo[i][2];
+                Arrivals[i].Airline = arrivalsInfo[i][3];
+                Arrivals[i].Terminal = arrivalsInfo[i][4];
+                Arrivals[i].FlightStatus = arrivalsInfo[i][5];
+                Arrivals[i].Gate = arrivalsInfo[i][6];
+            }
+        }
+
+        private static void BuildScreen()
+        {
+            string[] titles = { "AEROPORT", "DEPARTURES", "ARRIVALS" };
+            string[] headTags = { "TIME", "FLIGHT", "CITY/PORT", "AIRLINE", "TERMINAL", "STATUS", "GATE" };
+            int[] positions = { 15, 48, 65, 82, 100, 125, 150 };
+            int[] dataPositions = { 15, 48, 65, 82, 103, 120, 151 };
+
+            Console.Clear();
+
+            for (int i = 0; i < titles.Length - 1; i++)
+            {
+                Console.CursorLeft = (Console.WindowWidth - titles[i].Length) / 2;
+                Console.WriteLine(titles[i]);
+                makeLine();
+            }
+
+            makeLine(20);
+            Console.CursorLeft = (Console.WindowWidth - titles[2].Length) / 2;
+            Console.WriteLine(titles[2]);
+            makeLine();
+            makeLine(38);
+
+            Console.CursorTop = 40;
+            Console.Write("MENU - 1-Edit  2-Erase   3-Search by Flight  4-Search by time  5-Search Departure  6-Search Arrival  7-Get near flights 8-Help CHOOSE AN OPTION: ");
+
+            Console.SetCursorPosition(0, 5);
+            for (int i = 0; i < headTags.Length; i++)
+            {
+                Console.CursorLeft = positions[i];
+                Console.Write(headTags[i]);
+            }
+
+            Console.SetCursorPosition(0, 24);
+            for (int i = 0; i < headTags.Length; i++)
+            {
+                Console.CursorLeft = positions[i];
+                Console.Write(headTags[i]);
+            }
+
+            Console.SetCursorPosition(0, 7);
+            for (int i = 0; i < departuresInfo.Length; i++)
+            {
+                Console.CursorLeft = 15;
+                DateTime date = (DateTime)Departures[i].DateTime;
+                Console.Write(date.ToString("HH:mm"));
+                Console.CursorLeft = 48;
+                Console.Write(Departures[i].FlightNumber);
+                Console.CursorLeft = 65;
+                Console.Write(Departures[i].CityPort);
+                Console.CursorLeft = 82;
+                Console.Write(Departures[i].Airline);
+                Console.CursorLeft = 103;
+                Console.Write(Departures[i].Terminal);
+                Console.CursorLeft = 120;
+                Console.Write(Departures[i].FlightStatus);
+                Console.CursorLeft = 151;
+                Console.Write(Departures[i].Gate);
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+
+            Console.SetCursorPosition(0, 26);
+            for (int i = 0; i < arrivalsInfo.Length; i++)
+            {
+                Console.CursorLeft = 15;
+                DateTime date = (DateTime)Arrivals[i].DateTime;
+                Console.Write(date.ToString("HH:mm"));
+                Console.CursorLeft = 48;
+                Console.Write(Arrivals[i].FlightNumber);
+                Console.CursorLeft = 65;
+                Console.Write(Arrivals[i].CityPort);
+                Console.CursorLeft = 82;
+                Console.Write(Arrivals[i].Airline);
+                Console.CursorLeft = 103;
+                Console.Write(Arrivals[i].Terminal);
+                Console.CursorLeft = 120;
+                Console.Write(Arrivals[i].FlightStatus);
+                Console.CursorLeft = 151;
+                Console.Write(Arrivals[i].Gate);
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+
+        private static void mainMenu(int option)
+        {
+            switch (option)
+            {
+                case 1:
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                                                   ");
+                    string stringMessage1 = "Edit - 1-Departures, 2-Arrivals? ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessage1);
+                    Console.CursorLeft = stringMessage1.Length;
+                    int editOption = int.Parse(Console.ReadLine());
+
+                    if (editOption > 0 && editOption < 3)
+                    {
+                        editMenu(editOption);
+                    }
+                    else
+                    {
+                        mainMenu(1);
+                    }
+                    break;
+                
+                    // Delete menu
+                #region
+                case 2:
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                                                                      ");
+                    string stringMessageErase = "Erase in - 1-Departures, 2-Arrivals? ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessageErase);
+                    Console.CursorLeft = stringMessageErase.Length;
+                    int editOptionErase = int.Parse(Console.ReadLine());
+
+                    if (editOptionErase > 0 && editOptionErase < 3)
+                    {
+                        if (editOptionErase == 1)
+                        {
+                            bool flightExistsErase = false;
+                            int indexFlightErase = 0;
+
+                            while (!flightExistsErase)
+                            {
+                                Console.CursorTop = 40;
+                                Console.Write("                                                                                                                                              ");
+                                string stringMessage2 = "Departures Erase - CHOOSE A FLIGHT: ";
+                                Console.CursorTop = 40;
+                                Console.CursorLeft = 0;
+                                Console.Write(stringMessage2);
+                                Console.CursorLeft = stringMessage2.Length;
+                                string editFlight = Console.ReadLine();
+
+                                for (int i = 0; i < departuresInfo.Length; i++)
+                                {
+                                    if (Departures[i].FlightNumber == editFlight)
+                                    {
+                                        indexFlightErase = i;
+                                        flightExistsErase = true;
+                                    }
+                                }
+                            }
+                            string[][] newArr2d = departuresInfo.Where((arr, index) => index != indexFlightErase).ToArray();
+                            departuresInfo = newArr2d;
+
+                            PopulateData();
+                            BuildScreen();
+                        }
+
+                        if (editOptionErase == 2)
+                        {
+                            bool flightExistsErase = false;
+                            int indexFlightErase = 0;
+
+                            while (!flightExistsErase)
+                            {
+                                Console.CursorTop = 40;
+                                Console.Write("                                                                                                                                             ");
+                                string stringMessage3 = "Arrivals Erase - CHOOSE A FLIGHT: ";
+                                Console.CursorTop = 40;
+                                Console.CursorLeft = 0;
+                                Console.Write(stringMessage3);
+                                Console.CursorLeft = stringMessage3.Length;
+                                string editFlight = Console.ReadLine();
+
+                                for (int i = 0; i < arrivalsInfo.Length; i++)
+                                {
+                                    if (Arrivals[i].FlightNumber == editFlight)
+                                    {
+                                        indexFlightErase = i;
+                                        flightExistsErase = true;
+                                    }
+                                }
+                            }
+
+                            string[][] newArr2d = arrivalsInfo.Where((arr, index) => index != indexFlightErase).ToArray();
+                            arrivalsInfo = newArr2d;
+
+                            PopulateData();
+                            BuildScreen();
+                        }
+                    }
+                    else
+                    {
+                        mainMenu(2);
+                    }
+                    break;
+                #endregion
+
+                case 3:
+                    // Search by flight
+                    int editOptionSearchByFlight = 0;
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                                                                  ");
+                    string stringMessageSearchByFlight = "Edit - 1-Departures, 2-Arrivals? ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessageSearchByFlight);
+                    Console.CursorLeft = stringMessageSearchByFlight.Length;
+
+                    editOptionSearchByFlight = int.Parse(Console.ReadLine());
+                    searchByFlightMenu(editOptionSearchByFlight);
+
+                    break;
+
+                case 4:
+                    // Search by TIME
+                    editOptionSearchByFlight = 0;
+
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                                                                  ");
+                    string stringMessageSearchByTime = "Edit - 1-Departures, 2-Arrivals? ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessageSearchByTime);
+                    Console.CursorLeft = stringMessageSearchByTime.Length;
+
+                    editOptionSearchByFlight = int.Parse(Console.ReadLine());
+                    searchByTimeMenu(editOptionSearchByFlight);
+
+                    break;
+
+                case 5:
+                    // Search by DEPARTURE
+                    bool flightExists = false;
+                    int[] indexes = new int[0];
+
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                                                                     ");
+                    string stringMessage = "Departures - WRITE DESTINATION: ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessage);
+                    Console.CursorLeft = stringMessage.Length;
+                    string destinationFlight = Console.ReadLine();
+
+                    for (int i = 0; i < departuresInfo.Length; i++)
+                    {
+                        if (Departures[i].CityPort == destinationFlight)
+                        {
+                            Array.Resize(ref indexes, indexes.Length + 1);
+                            indexes[indexes.Length - 1] = i;
+                            flightExists = true;
+                        }
+                    }
+
+                    if (flightExists)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Search results:");
+                        Console.WriteLine();
+
+                        for (int j = 0; j < indexes.Length; j++)
+                        {
+                            Console.WriteLine("TIME : " + Departures[indexes[j]].DateTime.ToString());
+                            Console.WriteLine("FLIGHT : " + Departures[indexes[j]].FlightNumber);
+                            Console.WriteLine("CITY/PORT : " + Departures[indexes[j]].CityPort);
+                            Console.WriteLine("AIRLINE : " + Departures[indexes[j]].Airline);
+                            Console.WriteLine("TERMINAL : " + Departures[indexes[j]].Terminal);
+                            Console.WriteLine("STATUS : " + Departures[indexes[j]].FlightStatus);
+                            Console.WriteLine("GATE : " + Departures[indexes[j]].Gate);
+
+                            Console.WriteLine();
+                        }
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("No search results.");
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    break;
+
+                case 6:
+                    // Search by Arrivals
+                    flightExists = false;
+                    int[] indexesArr = new int[0];
+
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                                                                     ");
+                    stringMessage = "Arrivals - WRITE ORIGIN: ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessage);
+                    Console.CursorLeft = stringMessage.Length;
+                    string originFlight = Console.ReadLine();
+
+                    for (int i = 0; i < arrivalsInfo.Length; i++)
+                    {
+                        if (Arrivals[i].CityPort == originFlight)
+                        {
+                            Array.Resize(ref indexesArr, indexesArr.Length + 1);
+                            indexesArr[indexesArr.Length - 1] = i;
+                            flightExists = true;
+                        }
+                    }
+
+                    if (flightExists)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Search results:");
+                        Console.WriteLine();
+
+                        for (int j = 0; j < indexesArr.Length; j++)
+                        {
+                            Console.WriteLine("TIME : " + Arrivals[indexesArr[j]].DateTime.ToString());
+                            Console.WriteLine("FLIGHT : " + Arrivals[indexesArr[j]].FlightNumber);
+                            Console.WriteLine("CITY/PORT : " + Arrivals[indexesArr[j]].CityPort);
+                            Console.WriteLine("AIRLINE : " + Arrivals[indexesArr[j]].Airline);
+                            Console.WriteLine("TERMINAL : " + Arrivals[indexesArr[j]].Terminal);
+                            Console.WriteLine("STATUS : " + Arrivals[indexesArr[j]].FlightStatus);
+                            Console.WriteLine("GATE : " + Arrivals[indexesArr[j]].Gate);
+
+                            Console.WriteLine();
+                        }
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("No search results.");
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    break;
+
+                case 7:
+                    // Search by TIME
+                    editOptionSearchByFlight = 0;
+
+
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                                                                  ");
+                    string stringMessageNearOnes = "Search near flights - 1-Departures, 2-Arrivals? ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessageNearOnes);
+                    Console.CursorLeft = stringMessageNearOnes.Length;
+
+                    editOptionSearchByFlight = int.Parse(Console.ReadLine());
+                    searchNearFlights(editOptionSearchByFlight);
+
+                    break;
+
+                case 8:
+                    string warningMsn = "WARNING!!!!!!! ALARM ACTIVATED!!!!!!";
+                    Console.CursorLeft = (Console.WindowWidth - warningMsn.Length) / 2;
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine();
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Console.CursorLeft = (Console.WindowWidth - warningMsn.Length) / 2;
+                        Console.WriteLine(warningMsn);
+                    }
+
+                    Console.ResetColor();
+                    Console.WriteLine();
+                    Console.WriteLine("Press any key to deactivate the alarm and return...");
+                    Console.ReadLine();
+
+                    BuildScreen();
+
+                    break;
+
+                case 9:
+                    System.Environment.Exit(-1);
+                    break;
+
+
+            }
+        }
+
+        private static void editMenu(int option)
+        {
+            switch (option)
+            {
+                #region
+                case 1:
+                    bool flightExists = false;
+                    int indexFlight = 0;
+
+                    while (!flightExists)
+                    {
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                                       ");
+                        string stringMessage = "Departures - CHOOSE A FLIGHT: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(stringMessage);
+                        Console.CursorLeft = stringMessage.Length;
+                        string editFlight = Console.ReadLine();
+
+                        for (int i = 0; i < departuresInfo.Length; i++)
+                        {
+                            if (Departures[i].FlightNumber == editFlight)
+                            {
+                                indexFlight = i;
+                                flightExists = true;
+                            }
+                        }
+                    }
+
+                    if (flightExists)
+                    {
+                        bool correctDate = false;
+                        while (!correctDate)
+                        {
+                            Console.CursorTop = 40;
+                            Console.Write("                                                                                                      ");
+                            string editDate = "Edit - Set TIME \"HH:mm\": ";
+                            Console.CursorTop = 40;
+                            Console.CursorLeft = 0;
+                            Console.Write(editDate);
+                            DateTime timeDeparture;
+
+                            if (DateTime.TryParse(Console.ReadLine(), out timeDeparture))
+                            {
+                                Departures[indexFlight].DateTime = timeDeparture;
+                                correctDate = true;
+                            }
+                        }
+
+
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                      ");
+                        string editCity = "Edit - Set CITY/PORT: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(editCity);
+                        Departures[indexFlight].CityPort = Console.ReadLine();
+
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                      ");
+                        string editAirline = "Edit - Set AIRLINE: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(editAirline);
+                        Departures[indexFlight].Airline = Console.ReadLine();
+
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                      ");
+                        string editTerminal = "Edit - Set TERMINAL: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(editTerminal);
+                        Departures[indexFlight].Terminal = Console.ReadLine();
+
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                      ");
+                        string editStatus = "Edit - Set STATUS: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(editStatus);
+                        Departures[indexFlight].FlightStatus = Console.ReadLine();
+
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                      ");
+                        string editGate = "Edit - Set GATE: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(editGate);
+                        Departures[indexFlight].Gate = Console.ReadLine();
+
+                        BuildScreen();
+
+                    }
+                    break;
+                #endregion
+
+                #region
+                case 2:
+                    bool flightExistsArrivals = false;
+                    int indexFlightArrivals = 0;
+
+                    while (!flightExistsArrivals)
+                    {
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                      ");
+                        string stringMessage = "Arrivals - CHOOSE A FLIGHT: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(stringMessage);
+                        Console.CursorLeft = stringMessage.Length;
+                        string editFlight = Console.ReadLine();
+
+                        for (int i = 0; i < arrivalsInfo.Length; i++)
+                        {
+                            if (Arrivals[i].FlightNumber == editFlight)
+                            {
+                                indexFlightArrivals = i;
+                                flightExistsArrivals = true;
+                            }
+                        }
+                    }
+
+                    if (flightExistsArrivals)
+                    {
+                        bool corretDate = false;
+                        while (!corretDate)
+                        {
+                            Console.CursorTop = 40;
+                            Console.Write("                                                                                                      ");
+                            string editDate = "Edit - Set TIME \"HH:MM\": ";
+                            Console.CursorTop = 40;
+                            Console.CursorLeft = 0;
+                            Console.Write(editDate);
+                            DateTime timeArrival;
+
+                            if (DateTime.TryParse(Console.ReadLine(), out timeArrival))
+                            {
+                                Arrivals[indexFlightArrivals].DateTime = timeArrival;
+                                corretDate = true;
+                            }
+                        }
+
+
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                      ");
+                        string editCity = "Edit - Set CITY/PORT: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(editCity);
+                        Arrivals[indexFlightArrivals].CityPort = Console.ReadLine();
+
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                      ");
+                        string editAirline = "Edit - Set AIRLINE: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(editAirline);
+                        Arrivals[indexFlightArrivals].Airline = Console.ReadLine();
+
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                      ");
+                        string editTerminal = "Edit - Set TERMINAL: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(editTerminal);
+                        Arrivals[indexFlightArrivals].Terminal = Console.ReadLine();
+
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                      ");
+                        string editStatus = "Edit - Set STATUS: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(editStatus);
+                        Arrivals[indexFlightArrivals].FlightStatus = Console.ReadLine();
+
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                      ");
+                        string editGate = "Edit - Set GATE: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(editGate);
+                        Arrivals[indexFlightArrivals].Gate = Console.ReadLine();
+
+                        BuildScreen();
+
+                    }
+                    break;
+                    #endregion
+
+
+            }
+
+        }
+
+        private static void searchByFlightMenu(int option)
+        {
+            switch (option)
+            {
+
+                case 1:
+                    bool flightExists = false;
+                    int indexFlight = 0;
+
+                    while (!flightExists)
+                    {
+                        Console.CursorTop = 40;
+                        Console.Write("                                                                                                              ");
+                        string stringMessageDep = "Departures - WRITE A FLIGHT: ";
+                        Console.CursorTop = 40;
+                        Console.CursorLeft = 0;
+                        Console.Write(stringMessageDep);
+                        Console.CursorLeft = stringMessageDep.Length;
+                        string editFlightDep = Console.ReadLine();
+
+                        for (int i = 0; i < departuresInfo.Length; i++)
+                        {
+                            if (Departures[i].FlightNumber == editFlightDep)
+                            {
+                                indexFlight = i;
+                                flightExists = true;
+                            }
+                        }
+                    }
+
+                    if (flightExists)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Search result:");
+                        Console.WriteLine();
+
+                        Console.WriteLine("TIME : " + Departures[indexFlight].DateTime.ToString());
+                        Console.WriteLine("FLIGHT : " + Departures[indexFlight].FlightNumber);
+                        Console.WriteLine("CITY/PORT : " + Departures[indexFlight].CityPort);
+                        Console.WriteLine("AIRLINE : " + Departures[indexFlight].Airline);
+                        Console.WriteLine("TERMINAL : " + Departures[indexFlight].Terminal);
+                        Console.WriteLine("STATUS : " + Departures[indexFlight].FlightStatus);
+                        Console.WriteLine("GATE : " + Departures[indexFlight].Gate);
+
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("No search result:");
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    break;
+
+                case 2:
+                    flightExists = false;
+                    indexFlight = 0;
+
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                      ");
+                    string stringMessage = "Arrivals - WRITE A FLIGHT: ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessage);
+                    Console.CursorLeft = stringMessage.Length;
+                    string editFlight = Console.ReadLine();
+
+                    for (int i = 0; i < arrivalsInfo.Length; i++)
+                    {
+                        if (Arrivals[i].FlightNumber == editFlight)
+                        {
+                            indexFlight = i;
+                            flightExists = true;
+                        }
+                    }
+
+                    if (flightExists)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Search results:");
+                        Console.WriteLine();
+
+                        Console.WriteLine("TIME : " +Arrivals[indexFlight].DateTime.ToString());
+                        Console.WriteLine("FLIGHT : " + Arrivals[indexFlight].FlightNumber);
+                        Console.WriteLine("CITY/PORT : " + Arrivals[indexFlight].CityPort);
+                        Console.WriteLine("AIRLINE : " + Arrivals[indexFlight].Airline);
+                        Console.WriteLine("TERMINAL : " + Arrivals[indexFlight].Terminal);
+                        Console.WriteLine("STATUS : " + Arrivals[indexFlight].FlightStatus);
+                        Console.WriteLine("GATE : " + Arrivals[indexFlight].Gate);
+
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("No search results.");
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    break;
+            }
+        }//
+
+        private static void searchByTimeMenu(int option)
+        {
+            switch (option)
+            {
+
+                case 1:
+                    bool flightExists = false;
+                    int[] indexes = new int[0];
+
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                               ");
+                    string stringMessage = "Departures - WRITE FLIGHT'S TIME: ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessage);
+                    Console.CursorLeft = stringMessage.Length;
+                    string timeFlight = Console.ReadLine();
+
+                    for (int i = 0; i < departuresInfo.Length; i++)
+                    {
+                        DateTime date = (DateTime)Departures[i].DateTime;
+                        string flightsTime = date.ToString("HH:mm");
+
+                        if (flightsTime == timeFlight)
+                        {
+                            Array.Resize(ref indexes, indexes.Length + 1);
+                            indexes[indexes.Length - 1] = i;
+                            flightExists = true;
+                        }
+                    }
+
+                    if (flightExists)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Search results:");
+                        Console.WriteLine();
+
+                        for (int j = 0; j < indexes.Length; j++)
+                        {
+                            Console.WriteLine("TIME : " + Departures[indexes[j]].DateTime.ToString());
+                            Console.WriteLine("FLIGHT : " + Departures[indexes[j]].FlightNumber);
+                            Console.WriteLine("CITY/PORT : " + Departures[indexes[j]].CityPort);
+                            Console.WriteLine("AIRLINE : " + Departures[indexes[j]].Airline);
+                            Console.WriteLine("TERMINAL : " + Departures[indexes[j]].Terminal);
+                            Console.WriteLine("STATUS : " + Departures[indexes[j]].FlightStatus);
+                            Console.WriteLine("GATE : " + Departures[indexes[j]].Gate);
+
+                            Console.WriteLine();
+                        }
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("No search results.");
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    break;
+
+                case 2:
+                    flightExists = false;
+                    int[] indexesArr = new int[0];
+
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                      ");
+                    string stringMessageArr = "Arrivals - WRITE FLIGHT'S TIME: ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessageArr);
+                    Console.CursorLeft = stringMessageArr.Length;
+                    string timeFlightArr = Console.ReadLine();
+
+                    for (int i = 0; i < arrivalsInfo.Length; i++)
+                    {
+                        DateTime date = (DateTime)Arrivals[i].DateTime;
+                        string flightsTime = date.ToString("HH:mm");
+
+                        if (flightsTime == timeFlightArr)
+                        {
+                            Array.Resize(ref indexesArr, indexesArr.Length + 1);
+                            indexesArr[indexesArr.Length - 1] = i;
+                            flightExists = true;
+                        }
+                    }
+
+
+                    if (flightExists)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Search results:");
+                        Console.WriteLine();
+
+                        for (int j = 0; j < indexesArr.Length; j++)
+                        {
+                            Console.WriteLine("TIME : " + Arrivals[indexesArr[j]].DateTime.ToString());
+                            Console.WriteLine("FLIGHT : " + Arrivals[indexesArr[j]].FlightNumber);
+                            Console.WriteLine("CITY/PORT : " + Arrivals[indexesArr[j]].CityPort);
+                            Console.WriteLine("AIRLINE : " + Arrivals[indexesArr[j]].Airline);
+                            Console.WriteLine("TERMINAL : " + Arrivals[indexesArr[j]].Terminal);
+                            Console.WriteLine("STATUS : " + Arrivals[indexesArr[j]].FlightStatus);
+                            Console.WriteLine("GATE : " + Arrivals[indexesArr[j]].Gate);
+
+                            Console.WriteLine();
+                        }
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("No search results.");
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    break;
+            }
+        }//
+
+        private static void searchNearFlights(int option)
+        {
+            switch (option)
+            {
+
+                case 1:
+                    bool flightExists = false;
+                    int[] indexes = new int[0];
+
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                      ");
+                    string stringMessage = "Departures - WRITE THE TIME: ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessage);
+                    Console.CursorLeft = stringMessage.Length;
+                    TimeSpan timeIntro = TimeSpan.Parse(Console.ReadLine());
+
+                    for (int i = 0; i < departuresInfo.Length; i++)
+                    {
+                        DateTime timeDep = (DateTime)Departures[i].DateTime;
+                        TimeSpan timeFlight = timeDep.TimeOfDay;
+                        TimeSpan span = timeFlight.Subtract(timeIntro);
+                        double minutes = span.TotalMinutes;
+
+                        if (minutes > -60 && minutes < 60)
+                        {
+                            Array.Resize(ref indexes, indexes.Length + 1);
+                            indexes[indexes.Length - 1] = i;
+                            flightExists = true;
+                        }
+                    }
+
+
+                    if (flightExists)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Search results:");
+                        Console.WriteLine();
+
+                        for (int j = 0; j < indexes.Length; j++)
+                        {
+                            Console.WriteLine("TIME : " + Departures[indexes[j]].DateTime.ToString());
+                            Console.WriteLine("FLIGHT : " + Departures[indexes[j]].FlightNumber);
+                            Console.WriteLine("CITY/PORT : " + Departures[indexes[j]].CityPort);
+                            Console.WriteLine("AIRLINE : " + Departures[indexes[j]].Airline);
+                            Console.WriteLine("TERMINAL : " + Departures[indexes[j]].Terminal);
+                            Console.WriteLine("STATUS : " + Departures[indexes[j]].FlightStatus);
+                            Console.WriteLine("GATE : " + Departures[indexes[j]].Gate);
+
+                            Console.WriteLine();
+                        }
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("No search results.");
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    break;
+
+                case 2:
+                    flightExists = false;
+                    int[] indexesArr = new int[0];
+
+                    Console.CursorTop = 40;
+                    Console.Write("                                                                                                      ");
+                    string stringMessageArr = "Arrivals - WRITE THE TIME: ";
+                    Console.CursorTop = 40;
+                    Console.CursorLeft = 0;
+                    Console.Write(stringMessageArr);
+                    Console.CursorLeft = stringMessageArr.Length;
+                    TimeSpan timeIntroArr = TimeSpan.Parse(Console.ReadLine());
+
+                    for (int i = 0; i < arrivalsInfo.Length; i++)
+                    {
+                        DateTime timeArr = (DateTime)Arrivals[i].DateTime;
+                        TimeSpan timeFlight = timeArr.TimeOfDay;
+                        TimeSpan span = timeFlight.Subtract(timeIntroArr);
+                        double minutes = span.TotalMinutes;
+
+                        if (minutes > -60 && minutes < 60)
+                        {
+                            Array.Resize(ref indexesArr, indexesArr.Length + 1);
+                            indexesArr[indexesArr.Length - 1] = i;
+                            flightExists = true;
+                        }
+                    }
+
+
+                    if (flightExists)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Search results:");
+                        Console.WriteLine();
+
+                        for (int j = 0; j < indexesArr.Length; j++)
+                        {
+                            Console.WriteLine("TIME : " + Arrivals[indexesArr[j]].DateTime.ToString());
+                            Console.WriteLine("FLIGHT : " + Arrivals[indexesArr[j]].FlightNumber);
+                            Console.WriteLine("CITY/PORT : " + Arrivals[indexesArr[j]].CityPort);
+                            Console.WriteLine("AIRLINE : " + Arrivals[indexesArr[j]].Airline);
+                            Console.WriteLine("TERMINAL : " + Arrivals[indexesArr[j]].Terminal);
+                            Console.WriteLine("STATUS : " + Arrivals[indexesArr[j]].FlightStatus);
+                            Console.WriteLine("GATE : " + Arrivals[indexesArr[j]].Gate);
+
+                            Console.WriteLine();
+                        }
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("No search results.");
+                        Console.WriteLine();
+                        Console.WriteLine("Press a key to return...");
+                        string s = Console.ReadLine();
+                        BuildScreen();
+                    }
+                    break;
+            }
+        }//
+
+        static void makeLine()
+        {
+            for (int i = 0; i < Console.WindowWidth; i++)
+            {
+                Console.Write("_");
+            }
+
+        }
+        static void makeLine(int cursorPosition)
+        {
+            Console.CursorTop = cursorPosition;
+            for (int i = 0; i < Console.WindowWidth; i++)
+            {
+                Console.Write("_");
+            }
+
+        }
+    }
+}
