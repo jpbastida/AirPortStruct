@@ -15,12 +15,84 @@ namespace AirportStruct
         public string Terminal;
         public string FlightStatus;
         public string Gate;
+
+        public AirportBoard(DateTime time, string flight, string city, string airLine, string terminal, string status, string gate)
+        {
+            DateTime = time;
+            FlightNumber = flight;
+            CityPort = city;
+            Airline = airLine;
+            Terminal = terminal;
+            FlightStatus = status;
+            Gate = gate;
+        }
+    }
+
+    struct Titles
+    {
+        public string Title;
+        public string TitleDepartures;
+        public string TitleArrivals;
+
+        public Titles(string title, string depar, string arriv)
+        {
+            Title = title;
+            TitleDepartures = depar;
+            TitleArrivals = arriv;
+        }
+    }
+
+    struct HeadTags
+    {
+        public string TimeHead;
+        public string FlightHead;
+        public string CityHead;
+        public string AirlineHead;
+        public string TerminalHead;
+        public string StatusHead;
+        public string GateHead;
+
+        public HeadTags(string time, string flight, string city, string airLine, string terminal, string status, string gate)
+        {
+            TimeHead = time;
+            FlightHead = flight;
+            CityHead = city;
+            AirlineHead = airLine;
+            TerminalHead = terminal;
+            StatusHead = status;
+            GateHead = gate;
+        }
     }
 
     class Program
     {
-        static AirportBoard[] Arrivals = new AirportBoard[5];
-        static AirportBoard[] Departures = new AirportBoard[5];
+        static AirportBoard[] Departures = new AirportBoard[5]
+            {
+                new AirportBoard(DateTime.Parse("9:30", System.Globalization.CultureInfo.InvariantCulture),
+                    "PS713", "Istanbul", "UAL", "D", "departed at 8:35 AM", "G3"),
+                new AirportBoard(DateTime.Parse("10:10", System.Globalization.CultureInfo.InvariantCulture),
+                    "TK456", "Paris", "Tukish Airways", "F", "canceled", "A7"),
+                new AirportBoard(DateTime.Parse("10:10", System.Globalization.CultureInfo.InvariantCulture),
+                    "TP8234", "Prague", "TAP Portugal", "B", "Gate closed", "D11"),
+                new AirportBoard(DateTime.Parse("11:25", System.Globalization.CultureInfo.InvariantCulture),
+                    "AF3368", "Paris", "Air France", "D", "Boarding", "G7"),
+                new AirportBoard(DateTime.Parse("13:35", System.Globalization.CultureInfo.InvariantCulture),
+                    "LH2545", "Mexico", "Lufthansa", "B", "Check-in", "G13"),
+            };
+
+        static AirportBoard[] Arrivals = new AirportBoard[5]
+            {
+                new AirportBoard(DateTime.Parse("9:30", System.Globalization.CultureInfo.InvariantCulture),
+                    "G9260", "Munich", "Air Arabia", "D", "Arrived", "G5"),
+                new AirportBoard(DateTime.Parse("10:15", System.Globalization.CultureInfo.InvariantCulture),
+                    "DL8518", "Paris", "Delta Airlines", "A", "Unknown", "A11"),
+                new AirportBoard(DateTime.Parse("11:30", System.Globalization.CultureInfo.InvariantCulture),
+                     "LH2544", "Munich", "Lufthansa", "C", "Delayed", "B3"),
+                new AirportBoard(DateTime.Parse("11:30", System.Globalization.CultureInfo.InvariantCulture),
+                    "KL3096", "Amsterdam", "KLM", "A", "on flight", "D15"),
+                new AirportBoard(DateTime.Parse("14:00", System.Globalization.CultureInfo.InvariantCulture),
+                    "IB7982", "Barcelona", "Iberia", "D", "expected at", "G10"),
+            };
 
         static void Main(string[] args)
         {
@@ -28,12 +100,8 @@ namespace AirportStruct
             Console.WindowWidth = 170;
             Console.CursorVisible = false;
             Console.CursorVisible = true;
-
-            PopulateStructuresDeparture();
-            PopulateStructuresArrivals();
-            BuildScreen();
-
             int optionMenu = 0;
+            BuildScreen();
 
             while (true)
             {
@@ -59,131 +127,47 @@ namespace AirportStruct
             }
         }
 
-        static void PopulateStructuresDeparture()
-        {
-            Departures[0].DateTime = DateTime.Parse("8:30", System.Globalization.CultureInfo.InvariantCulture);
-            Departures[0].FlightNumber = "PS713";
-            Departures[0].CityPort = "Istanbul";
-            Departures[0].Airline = "UAL";
-            Departures[0].Terminal = "D";
-            Departures[0].FlightStatus = "departed at 8:35 AM";
-            Departures[0].Gate = "G3";
-
-            Departures[1].DateTime = DateTime.Parse("10:10", System.Globalization.CultureInfo.InvariantCulture);
-            Departures[1].FlightNumber = "TK456";
-            Departures[1].CityPort = "Paris";
-            Departures[1].Airline = "Tukish Airways";
-            Departures[1].Terminal = "F";
-            Departures[1].FlightStatus = "canceled";
-            Departures[1].Gate = "A7";
-
-            Departures[2].DateTime = DateTime.Parse("10:10", System.Globalization.CultureInfo.InvariantCulture);
-            Departures[2].FlightNumber = "TP8234";
-            Departures[2].CityPort = "Prague";
-            Departures[2].Airline = "TAP Portugal";
-            Departures[2].Terminal = "B";
-            Departures[2].FlightStatus = "Gate closed";
-            Departures[2].Gate = "D11";
-
-            Departures[3].DateTime = DateTime.Parse("11:25", System.Globalization.CultureInfo.InvariantCulture);
-            Departures[3].FlightNumber = "AF3368";
-            Departures[3].CityPort = "Paris";
-            Departures[3].Airline = "Air France";
-            Departures[3].Terminal = "D";
-            Departures[3].FlightStatus = "Boarding";
-            Departures[3].Gate = "G7";
-
-            Departures[4].DateTime = DateTime.Parse("13:35", System.Globalization.CultureInfo.InvariantCulture);
-            Departures[4].FlightNumber = "LH2545";
-            Departures[4].CityPort = "Mexico";
-            Departures[4].Airline = "Lufthansa";
-            Departures[4].Terminal = "B";
-            Departures[4].FlightStatus = "Check-in";
-            Departures[4].Gate = "G13";
-        }
-
-        static void PopulateStructuresArrivals()
-        {
-            Arrivals[0].DateTime = DateTime.Parse("9:30", System.Globalization.CultureInfo.InvariantCulture);
-            Arrivals[0].FlightNumber = "G9260";
-            Arrivals[0].CityPort = "Munich";
-            Arrivals[0].Airline = "Air Arabia";
-            Arrivals[0].Terminal = "D";
-            Arrivals[0].FlightStatus = "Arrived";
-            Arrivals[0].Gate = "G5";
-
-            Arrivals[1].DateTime = DateTime.Parse("10:15", System.Globalization.CultureInfo.InvariantCulture);
-            Arrivals[1].FlightNumber = "DL8518";
-            Arrivals[1].CityPort = "Paris";
-            Arrivals[1].Airline = "Delta Airlines";
-            Arrivals[1].Terminal = "A";
-            Arrivals[1].FlightStatus = "Unknown";
-            Arrivals[1].Gate = "A11";
-
-            Arrivals[2].DateTime = DateTime.Parse("11:30", System.Globalization.CultureInfo.InvariantCulture);
-            Arrivals[2].FlightNumber = "LH2544";
-            Arrivals[2].CityPort = "Munich";
-            Arrivals[2].Airline = "Lufthansa";
-            Arrivals[2].Terminal = "C";
-            Arrivals[2].FlightStatus = "Delayed";
-            Arrivals[2].Gate = "B3";
-
-            Arrivals[3].DateTime = DateTime.Parse("11:30", System.Globalization.CultureInfo.InvariantCulture);
-            Arrivals[3].FlightNumber = "KL3096";
-            Arrivals[3].CityPort = "Amsterdam";
-            Arrivals[3].Airline = "KLM";
-            Arrivals[3].Terminal = "A";
-            Arrivals[3].FlightStatus = "on flight";
-            Arrivals[3].Gate = "D15";
-
-            Arrivals[4].DateTime = DateTime.Parse("14:00", System.Globalization.CultureInfo.InvariantCulture);
-            Arrivals[4].FlightNumber = "IB7982";
-            Arrivals[4].CityPort = "Barcelona";
-            Arrivals[4].Airline = "Iberia";
-            Arrivals[4].Terminal = "D";
-            Arrivals[4].FlightStatus = "expected at";
-            Arrivals[4].Gate = "G10";
-        }
-
         private static void BuildScreen()
         {
-            string[] titles = { "AEROPORT", "DEPARTURES", "ARRIVALS" };
+            Titles Titles = new Titles("AIRPORT", "DEPARTURES", "ARRIVALS");
             string[] headTags = { "TIME", "FLIGHT", "CITY/PORT", "AIRLINE", "TERMINAL", "STATUS", "GATE" };
             int[] positions = { 15, 48, 65, 82, 100, 125, 150 };
-            int[] dataPositions = { 15, 48, 65, 82, 103, 120, 151 };
-
             Console.Clear();
 
-            for (int i = 0; i < titles.Length - 1; i++)
-            {
-                Console.CursorLeft = (Console.WindowWidth - titles[i].Length) / 2;
-                Console.WriteLine(titles[i]);
-                MakeLine();
-            }
+            Console.CursorLeft = (Console.WindowWidth - Titles.Title.Length) / 2;
+            Console.WriteLine(Titles.Title);
+            MakeLine(1);
+
+            Console.CursorLeft = (Console.WindowWidth - Titles.TitleDepartures.Length) / 2;
+            Console.WriteLine(Titles.TitleDepartures);
+            MakeLine(3);
 
             MakeLine(20);
-            Console.CursorLeft = (Console.WindowWidth - titles[2].Length) / 2;
-            Console.WriteLine(titles[2]);
-            MakeLine();
+            Console.CursorLeft = (Console.WindowWidth - Titles.TitleArrivals.Length) / 2;
+            Console.WriteLine(Titles.TitleArrivals);
+            MakeLine(22);
             MakeLine(38);
 
             Console.CursorTop = 40;
             Console.Write("MENU - 1-Edit  2-Erase   3-Search by Flight  4-Search by time  5-Search Departure  6-Search Arrival  7-Get near flights 8-Help CHOOSE AN OPTION: ");
-
             Console.SetCursorPosition(0, 5);
             for (int i = 0; i < headTags.Length; i++)
             {
                 Console.CursorLeft = positions[i];
                 Console.Write(headTags[i]);
             }
-
             Console.SetCursorPosition(0, 24);
             for (int i = 0; i < headTags.Length; i++)
             {
                 Console.CursorLeft = positions[i];
                 Console.Write(headTags[i]);
             }
+            DeparturesToScreen();
+            ArrivalsToScreen();
+        }
 
+        static void DeparturesToScreen()
+        {
             Console.SetCursorPosition(0, 7);
             for (int i = 0; i < 5; i++)
             {
@@ -210,7 +194,10 @@ namespace AirportStruct
             }
             Console.WriteLine();
             Console.WriteLine();
+        }
 
+        static void ArrivalsToScreen()
+        {
             Console.SetCursorPosition(0, 26);
             for (int i = 0; i < 5; i++)
             {
@@ -836,7 +823,7 @@ namespace AirportStruct
                     }
                     break;
             }
-        }//
+        }
 
         private static void SearchByTimeMenu(int option)
         {
@@ -963,7 +950,7 @@ namespace AirportStruct
                     }
                     break;
             }
-        }//
+        }
 
         private static void SearchNearFlights(int option)
         {
@@ -1093,17 +1080,9 @@ namespace AirportStruct
                     }
                     break;
             }
-        }//
-
-        static void MakeLine()
-        {
-            for (int i = 0; i < Console.WindowWidth; i++)
-            {
-                Console.Write("_");
-            }
         }
 
-        static void MakeLine(int cursorPosition)
+        static void MakeLine(int cursorPosition = 0)
         {
             Console.CursorTop = cursorPosition;
             for (int i = 0; i < Console.WindowWidth; i++)
