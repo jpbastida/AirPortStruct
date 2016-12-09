@@ -17,7 +17,6 @@ namespace AirportStruct
         public string Gate;
     }
 
-
     class Program
     {
         static AirportBoard[] Arrivals = new AirportBoard[5];
