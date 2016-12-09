@@ -34,11 +34,11 @@ namespace AirportStruct
         public string TitleDepartures;
         public string TitleArrivals;
 
-        public Titles(string title, string depar, string arriv)
+        public Titles(string title, string departure, string arrive)
         {
             Title = title;
-            TitleDepartures = depar;
-            TitleArrivals = arriv;
+            TitleDepartures = departure;
+            TitleArrivals = arrive;
         }
     }
 
