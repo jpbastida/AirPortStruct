@@ -42,28 +42,6 @@ namespace AirportStruct
         }
     }
 
-    struct HeadTags
-    {
-        public string TimeHead;
-        public string FlightHead;
-        public string CityHead;
-        public string AirlineHead;
-        public string TerminalHead;
-        public string StatusHead;
-        public string GateHead;
-
-        public HeadTags(string time, string flight, string city, string airLine, string terminal, string status, string gate)
-        {
-            TimeHead = time;
-            FlightHead = flight;
-            CityHead = city;
-            AirlineHead = airLine;
-            TerminalHead = terminal;
-            StatusHead = status;
-            GateHead = gate;
-        }
-    }
-
     class Program
     {
         static AirportBoard[] Departures = new AirportBoard[5]
